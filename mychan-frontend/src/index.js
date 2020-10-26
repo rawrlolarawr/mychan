@@ -2,7 +2,6 @@
 const BASE_URL = "http://localhost:3000"
 const POSTS_URL = `${BASE_URL}/posts`
 const main = document.querySelector('main')
-const nav = document.querySelector('nav')
 
 //HTML element builder class
 class htmlFactory {
@@ -71,7 +70,7 @@ const buildForm = (model, fieldsArr, url) => {
 
     let submit = htmlFactory.build('input', 'field')
     submit.setAttribute('type', 'submit')
-    
+
     form.appendChild(submit)
     return form
 }
@@ -98,6 +97,7 @@ const loadPostPage = function(post){
     }
 }
 
+//Comment Methods
 const createCommentCard = function(comment){
     let div = htmlFactory.build('div', 'card', `comment-id-${comment.id}`)
     let content = htmlFactory.build('p', 'card-content', `card-content-${comment.id}`, comment.content)
