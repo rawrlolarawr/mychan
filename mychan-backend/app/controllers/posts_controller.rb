@@ -4,6 +4,10 @@ class PostsController < ApplicationController
         render json: PostSerializer.new(posts)
     end
 
+    def results
+        results = Post.search(params[:search])
+    end
+
     def show
         post = Post.find_by_id(params[:id])
         render json: PostSerializer.new(post)

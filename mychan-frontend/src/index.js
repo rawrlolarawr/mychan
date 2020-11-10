@@ -2,6 +2,7 @@
 const BASE_URL = "http://localhost:3000"
 const POSTS_URL = `${BASE_URL}/posts`
 const main = document.querySelector('main')
+const search = document.querySelector('#search')
 
 //HTML element builder class
 class htmlFactory {
@@ -18,17 +19,22 @@ class htmlFactory {
 
 //Initial Calls
 document.addEventListener("DOMContentLoaded", () => {
-    main.appendChild(buildForm('post', ['title', 'content'], POSTS_URL))
+    search.appendChild(searchBar())
+    displayPostForm()
     fetchPosts()
 })
 
+const displayPostForm = function() {
+    main.appendChild(buildForm('post', ['title', 'content'], POSTS_URL))
+}
+
 //Posts Methods
 const fetchPosts = function(){
-    fetch(POSTS_URL).then(response => response.json()).then(json => createPostCards(json))
+    fetch(POSTS_URL).then(response => response.json()).then(json => createPostCards(json.data))
 }
 
 const createPostCards = function(posts){
-    let postsArr = posts.data.reverse()
+    let postsArr = posts.reverse()
     for(const post of postsArr){
         let div = htmlFactory.build('div', 'card', `post-id-${post.id}`)
         let title = htmlFactory.build('h3', 'card-title', `card-title-${post.id}`, post.attributes.title)
@@ -95,6 +101,29 @@ const loadPostPage = function(post){
     for(const comment of post.attributes.comments){
         createCommentCard(comment)
     }
+}
+
+const searchBar = () =>{
+    const bar = document.createElement('input')
+    bar.setAttribute('type', 'text')
+    bar.addEventListener("keyup", event => searchFunction(bar.value))
+    return bar
+}
+
+const fetchByTitle = (searchTitle) => {
+    fetch(POSTS_URL).then(response => response.json()).then(json => filterByTitle(json, searchTitle)).then(jsonFiltered => createPostCards(jsonFiltered))
+}
+
+const filterByTitle = (source, searchParam) => {
+    console.log(source.data)
+    let filtered = source.data.filter(i => i.attributes.title.toLowerCase().includes(searchParam.toLowerCase()))
+    return filtered
+}
+
+function searchFunction(title){
+    clearDOM()
+    displayPostForm()
+    fetchByTitle(title)
 }
 
 //Comment Methods
